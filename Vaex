@@ -77,3 +77,17 @@ Read Hdf5 files using Vaex library
 vaex_df = vaex.open('/content/final_data.csv.hdf5')
 type(vaex_df)
 vaex_df.head()
+
+
+### All the agorithms work out of core, the limit is the size of your harddriver
+dff.col2.minmax(progress='widget')
+
+Fast groupby / aggregations
+Vaex implements parallelized, highly performant groupby operations, especially when using categories (>1 billion/second).
+
+%%time
+vaex_df_group=vaex_df.groupby(vaex_df.col1,agg=vaex.agg.mean(vaex_df.col4))
+vaex_df_group
+
+%%time
+vaex_df.groupby(vaex_df.col1,agg='count')
