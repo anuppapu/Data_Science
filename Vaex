@@ -1,0 +1,79 @@
+What is Vaex?
+
+It is a high performance python libary used to visualize and explore big tabular datasets. It is capable of process billions of record per second.
+
+Vaex is the DataFrame (similar, but more efficient than a Pandas DataFrame)
+
+Vaex uses memory mapping, zero memory copy policy and lazy computations for best performance (no memory wasted).
+
+Features:
+
+Columns/expression can perform lazy computations, e.g. df.x * np.sin(df.y) does nothing, until the result is needed
+
+A set of virtual columns, columns that are backed by a (lazy) computation, e.g. df['r'] = df.x/df.y
+
+A set of selections, that can be used to explore the dataset, e.g. df.select(df.x < 0)
+
+Filtered DataFrames, that does not copy the data, df_negative = df[df.x < 0]
+
+Command to install
+
+• Anaconda users: conda install -c conda-forge vaex
+
+• Regular Python users using virtualenv: pip install vaex
+
+!pip install vaex
+
+Vaex Packages
+
+If you don't want to install all the dependent packages of Vaex the use below command to install only required packages
+
+• Regular Python users: pip install vaex-core vaex-viz vaex-jupyter vaex-arrow vaex-server vaex-ui vaex-hdf5 vaex-astro vaex-distributed
+
+• Anaconda users: conda install -c conda-forge vaex-core vaex-viz vaex-jupyter vaex-arrow vaex-server vaex-ui vaex-hdf5 vaex-astro vaex-distributed
+
+Create a Data Frame with 1 million of Rows and 500 Columns
+
+import vaex
+import pandas as pd
+import numpy as np
+n_rows = 1000000
+n_cols = 500
+df = pd.DataFrame(np.random.randint(0, 100, size=(n_rows, n_cols)), columns=['col%d' % i for i in range(n_cols)])
+df.head()
+
+df.col1 ## df.col.x or df['x'] are equivalent
+
+Memory Usages
+
+df.info(memory_usage='deep')
+
+Virtual Columns
+
+%%time
+df['Add_col18']=df.col1+df.col3
+
+Selections and filtering
+
+Instead of making copies, Vaex internally keeps track which rows are selected
+
+df[df.col1 > 70]
+
+Statistics on N-d grids
+df.col2.count()
+#df.count()
+df.col1.mean()
+
+Creating Csv files
+file_path = 'final_data.csv'
+df.to_csv(file_path, index=False)
+
+Create Hdf5 files
+%%time
+import vaex
+vaex_df = vaex.from_csv('/content/final_data.csv', convert=True, chunk_size=5_000_000)
+
+Read Hdf5 files using Vaex library
+vaex_df = vaex.open('/content/final_data.csv.hdf5')
+type(vaex_df)
+vaex_df.head()
